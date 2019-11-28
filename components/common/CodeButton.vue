@@ -23,7 +23,7 @@ export default {
   methods: {
     getCode (event) {
       console.log(this.mobile)
-      if (!/^1[3|4|5|8|7][0-9]\d{8}$/.test(parseInt(this.mobile))) {
+      if (!/^1[3|4|5|8|7|9][0-9]\d{8}$/.test(parseInt(this.mobile))) {
         this.$msgBox({
           content: '请输入正确手机号码',
           isShowCancelBtn: false

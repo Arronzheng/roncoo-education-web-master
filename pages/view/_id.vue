@@ -1,7 +1,7 @@
 <template>
   <div class="course_detail">
-    <y-watch-video  v-if="courseInfo.isPay" :courseInfo="courseInfo" @playfunc="videoPlay" :nowNo="nowPeriodNo" ref="watchVideo"></y-watch-video>
-    <y-display v-else :courseInfo="courseInfo" ref="watchVideo"></y-display>
+    <y-watch-video  v-if="courseInfo.isPay" :courseInfo="courseInfo" @playfunc="videoPlay" :nowNo="nowPeriodNo" :startPlay="startPlay" :playData="playData" ref="watchVideo"></y-watch-video>
+    <y-display v-else :courseInfo="courseInfo" :startPlay="startPlay" :playData="playData" ref="watchVideo"></y-display>
     <div class=" detail_info detail_box clearfix">
       <div class="layout_left">
         <ul class="course_tab clearfix">
@@ -10,7 +10,7 @@
         </ul>
         <div class="content_info"  v-if="tab == 'info'">
           <div class="introduce" v-html="courseInfo.introduce"></div>
-          <y-syllabus @playfunc="videoPlay" :list="courseInfo.chapterList" :nowNo="nowPeriodNo"></y-syllabus>
+<!--          <y-syllabus @playfunc="videoPlay" :list="courseInfo.chapterList" :nowNo="nowPeriodNo"></y-syllabus>-->
         </div>
         <div class="content_info"  v-if="tab == 'big'">
           <y-syllabus @playfunc="videoPlay" :list="courseInfo.chapterList" :nowNo="nowPeriodNo"></y-syllabus>
@@ -40,7 +40,8 @@ import YDisplay from '~/components/course/Display'
 import YFooter from '~/components/common/Footer'
 import YSyllabus from '~/components/course/Syllabus'
 import YWatchVideo from '~/components/course/WatchVideo'
-import {courseDetail, userCourseDetail, chapterSign} from '~/api/course.js'
+import {courseDetail, userCourseDetail, chapterSign, periodVideoUrl} from '~/api/course.js'
+import {periodVideo} from "../../api/account/course";
 export default {
   components: {
     YFooter,
@@ -56,7 +57,9 @@ export default {
   data () {
     return {
       tab: 'info',
-      nowPeriodNo: ''  //当前播放章节
+      nowPeriodNo: '',  //当前播放章节
+      startPlay: false,
+      playData: {}
     }
   },
   validate ({ params }) {
@@ -101,35 +104,57 @@ export default {
     } catch (e) {
       context.error({ message: 'User not found', statusCode: 404 })
     }
-    
+
   },
   methods: {
     videoPlay (data) {
       console.log(data)
       if (this.courseInfo.isPay || data.isFree) {
-      window.scrollTo(0, 0)
-      console.log(data)
-      this.nowPeriodNo = data.id
-      chapterSign({
-        ip: 'string',
-        periodId: data.id,
-        videoVid: data.videoVid
-      }).then(res => {
-        res = res.data
-        this.isResetVideo = false
-        console.log(res)
-        console.log("res==========")
-        if (res.code === 200) {
-          this.play(Object.assign({vid: data.videoVid}, res.data));
-        } else if (res.code === 402) {
-          this.$msgBox({
-            content: '购买后才可以观看',
-            isShowCancelBtn: false
-          })
+        window.scrollTo(0, 0)
+        console.log(data)
+        this.nowPeriodNo = data.id
+        if (this.courseInfo.videoType === 1) {
+            //保利威视播放
+            chapterSign({
+                ip: 'string',
+                periodId: data.id,
+                videoVid: data.videoVid
+            }).then(res => {
+                res = res.data
+                this.isResetVideo = false
+                console.log(res)
+                console.log("res==========")
+                if (res.code === 200) {
+                    this.play(Object.assign({vid: data.videoVid}, res.data));
+                } else if (res.code === 402) {
+                    this.$msgBox({
+                        content: '购买后才可以观看',
+                        isShowCancelBtn: false
+                    })
+                }
+            }).catch(() => {
+                this.isResetVideo = false
+            })
+        } else {
+            //腾讯云播放
+            periodVideoUrl({
+                ip: 'string',
+                periodId: data.id
+            }).then(res => {
+                res = res.data
+                this.isResetVideo = false
+                if (res.code === 200) {
+                    this.tencentPlay(Object.assign({}, res.data));
+                } else {
+                    this.$msgBox({
+                        content: '购买后才可以观看',
+                        isShowCancelBtn: false
+                    })
+                }
+            }).catch(() => {
+                this.isResetVideo = false
+            })
         }
-      }).catch(() => {
-        this.isResetVideo = false
-      })
       } else {
         this.$msgBox({
           content: '购买后才可以播放',
@@ -161,6 +186,13 @@ export default {
             'vid': data.vid
         });
       }
+    },
+    tencentPlay (data) {
+        let $this = this
+        let box = this.$refs.watchVideo.$refs.videobox;
+        box.style.backgroundImage = ''
+        this.startPlay = true;
+        this.playData = data;
     }
   },
   mounted () {
@@ -274,6 +306,16 @@ export default {
       font-weight: 700;
       color: #333;
       margin-bottom: 10px;
+    }
+    .err_msg {
+      position: relative;
+      width: 100%;
+      height: 250px;
+      background: #000;
+      opacity:0.5;
+      /* filter: alpha(opacity=100); *//***针对ie8以上或者更早的浏览器****/
+      background-color: transparent;
+      z-index: 1;
     }
   }
 }

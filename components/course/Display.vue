@@ -11,7 +11,12 @@
         </ul>
         <div class="clearfix">
           <div class="video_box">
-            <div class="detail_view" id="player" ref="videobox" :style="'background-image:url('+courseInfo.courseLogo+')'"></div>
+            <div class="detail_view" id="player" ref="videobox" :style="'background-image:url('+courseInfo.courseLogo+')'">
+              <my-video v-if="startPlay" :playData="playData"></my-video>
+            </div>
+<!--            <div v-else class="detail_view" ref="tencentBox" :style="'background-image:url('+courseInfo.courseLogo+')'">-->
+<!--&lt;!&ndash;              <video controls="controls" autoplay="autoplay"></video>&ndash;&gt;-->
+<!--            </div>-->
             <!-- <span class="iconfont close_video" @click="stopVideo">&#xe616;</span> -->
           </div>
           <div class="view_info">
@@ -49,10 +54,12 @@
 <script>
 import YHeader from '../common/Header'
 import DPay from '~/components/PayModal'
+import MyVideo from '../common/MyVideo'
 export default {
   components: {
     DPay,
-    YHeader
+    YHeader,
+    MyVideo
   },
   props: {
     courseInfo: {
@@ -96,7 +103,7 @@ export default {
   mounted () {
   }
 }
-  
+
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
@@ -246,7 +253,7 @@ export default {
       position: fixed;
       right: 10px;
       bottom: 30px;
-      z-index: 9999;
+      z-index: 99999;
     }
   }
   .view_teacher {

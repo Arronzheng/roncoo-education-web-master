@@ -26,8 +26,9 @@
       <div class="video_content clearfix" :class="{show_panel: cateType}">
         <div class="win_box">
           <div class="video_win" id="player" ref="videobox" :style="'background-image:url('+courseInfo.courseLogo+')'">
+            <my-video v-if="startPlay" :playData="playData" :nowNo="nowNo"></my-video>
           </div>
-          <span class="iconfont close_video" v-if="showTop" @click="stopVideo">&#xe616;</span>
+<!--          <span class="iconfont close_video" v-if="showTop" @click="stopVideo">&#xe616;</span>-->
         </div>
         <div class="video_info">
           <a href="javascript:" @click="changeTab(1)" :class="{on: cateType == 1}">
@@ -44,7 +45,7 @@
             <dl v-for="(one, index) in courseInfo.chapterList" :key="index">
               <dt>第{{index + 1}}章：{{one.chapterName}}</dt>
               <dd v-for="(two, num) in one.periodList" :key="num" :class="{on : nowNo == two.id}" @click="videoPlay(two)"><i class="iconfont">&#xe690;</i><span>第{{num + 1}}讲：</span>{{two.periodName}}
-                <span class="no_video2" v-if="!two.videoVid">(未更新)</span>
+                <span class="no_video2" v-if="!two.isVideo">(未更新)</span>
                 <span class="c_blue" v-if="two.isFree">(免费)</span>
               </dd>
             </dl>
@@ -53,7 +54,7 @@
             <dl v-for="(one, index) in courseInfo.chapterList" :key="index">
               <dt>{{one.chapterName}}</dt>
               <dd v-for="(two, num) in one.periodList" :key="num" v-if="two.isDoc">
-                <a href="javascript:" @click="noDown"><i class="iconfont">&#xe602;</i>{{two.docName}}</a>
+                <a href="javascript:" @click="noDown(two)"><i class="iconfont">&#xe602;</i>{{two.docName}}</a>
               </dd>
             </dl>
           </div>
@@ -63,7 +64,11 @@
   </div>
 </template>
 <script>
+import MyVideo from '../common/MyVideo'
 export default {
+    components: {
+        MyVideo
+    },
   props: {
     courseInfo: {
       type: Object,
@@ -72,6 +77,16 @@ export default {
     nowNo: {
       type: String,
       default: ''
+    },
+    startPlay: {
+      type: Boolean,
+      default: false
+    },
+    playData: {
+      type: Object,
+      default: () => {
+
+      }
     }
   },
   data () {
@@ -84,7 +99,6 @@ export default {
     }
   },
   methods: {
-
     changeTab (int) {
       if (int === this.cateType) {
         this.cateType = 0;
@@ -119,7 +133,7 @@ export default {
     },
     videoPlay (data) {
       console.log(data)
-      if (!data.videoVid) {
+      if (data.isVideo) {
         this.$msgBox({
           content: '该视频未更新',
           isShowCancelBtn: false
@@ -230,14 +244,14 @@ export default {
     .win_box {
       float: left;
       width: 1120px;
-      height: 595px;
+      height: 633px;
       margin: 5px 0;
       border-radius: 8px;
       border: 5px solid #000;
     }
     .video_win {
       width: 1110px;
-      height: 585px;
+      height: 633px;
       -webkit-background-size: 100%;
       background-size: 100%;
       &.mini_win {
@@ -255,7 +269,7 @@ export default {
       float: right;
       padding-top: 20px;
       height: 595px;
-      background-color: #333;      
+      background-color: #333;
       a {
         overflow: hidden;
         display: block;

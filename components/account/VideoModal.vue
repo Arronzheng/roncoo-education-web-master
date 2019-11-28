@@ -28,7 +28,7 @@
               </li>
             </ul>
           </div>
-          <div class="right_list">
+          <div class="">
             <div data-v-1300c342="" class="title">视频库列表</div>
             <ul>
               <li class="img" v-for="(item, index) in chapterVideoList" :key="index" @click="selVideo(item)" title="点击选择">

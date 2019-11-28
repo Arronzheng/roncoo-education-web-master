@@ -16,7 +16,7 @@
         <div class="zone_body">
           <ul class="clearfix course_list">
             <li v-for="(that, int) in item.zoneCourseList" :key="int">
-              <nuxt-link target="_blank" :to="{name: 'view-id', params: {id: that.id}}">
+              <nuxt-link target="_self" :to="{name: 'view-id', params: {id: that.id}}">
                 <div class="img_box">
                   <img :src="that.courseLogo" alt="">
                 </div>
@@ -26,7 +26,7 @@
               </nuxt-link>
             </li>
             <li v-for="thatLive in item.liveCourseList" :key="thatLive.id">
-              <nuxt-link target="_blank" :to="{name: 'live-id', params: {id: thatLive.id}}">
+              <nuxt-link target="_self" :to="{name: 'live-id', params: {id: thatLive.id}}">
                 <div class="img_box">
                   <img :src="thatLive.courseLogo" alt="">
                   <div class="live_time">
@@ -40,7 +40,7 @@
               </nuxt-link>
             </li>
             <li v-for="thatGroup in item.zoneCourseCombinaRefList" :key="thatGroup.id">
-              <nuxt-link target="_blank" :to="{name: 'liveAndBunch', params: {id: thatGroup.id}}">
+              <nuxt-link target="_self" :to="{name: 'liveAndBunch', params: {id: thatGroup.id}}">
                 <div class="img_box">
                   <img :src="thatGroup.courseLogo" alt="">
                 </div>
@@ -52,7 +52,7 @@
           </ul>
           <ul class="test_list clearfix">
             <li :class="{test_option: true, right_0: (num % 2 == 1)}" v-for="(resource, num) in item.zoneCourseLibList" :key="resource.id">
-              <nuxt-link target="_blank" :to="{name: 'libraryDetail', params: {id: resource.id}}"><i class="iconfont">&#xe6be;</i>{{resource.courseName}}</nuxt-link>
+              <nuxt-link target="_self" :to="{name: 'libraryDetail', params: {id: resource.id}}"><i class="iconfont">&#xe6be;</i>{{resource.courseName}}</nuxt-link>
             </li>
           </ul>
         </div>

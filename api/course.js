@@ -20,3 +20,7 @@ export const userCourseDetail = (params={}, token) => {
 export const chapterSign = (params={}, token) => {
   return http(token).post('/course/auth/course/sign', params)
 }
+// 获取腾讯播放url
+export const periodVideoUrl = (params={}, token) => {
+  return http(token).post('/course/auth/course/playUrl', params)
+}

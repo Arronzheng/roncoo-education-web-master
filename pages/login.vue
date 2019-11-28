@@ -174,7 +174,7 @@ export default {
       }
       this.errTip1 = '';
       this.errTip2 = '';
-      if (!(/^1[3|4|5|8|7][0-9]\d{4,8}$/.test(this.obj.mobile.trim())) && !(/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/).test(this.obj.mobile.trim())) {
+      if (!(/^1[3|4|5|8|7|9][0-9]\d{4,8}$/.test(this.obj.mobile.trim())) && !(/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/).test(this.obj.mobile.trim())) {
         this.errTip1 = '请输入正确手机号或者邮箱';
         return false;
       }
@@ -218,7 +218,7 @@ export default {
       if (this.subState) {
         return false;
       }
-      if (!(/^1[3|4|5|8|7][0-9]\d{4,8}$/.test(this.pobj.mobile.trim())) || this.pobj.mobile.trim().length !== 11) {
+      if (!(/^1[3|4|5|8|7|9][0-9]\d{4,8}$/.test(this.pobj.mobile.trim())) || this.pobj.mobile.trim().length !== 11) {
         this.$msgBox({
           content: '请输入正确手机',
           isShowCancelBtn: false

@@ -8,12 +8,12 @@
       </div>
       <div class="period_info" v-for="(two, num) in one.periodList" :key="num">
         <div class="period_top" @click="videoPlay(two)" :class="{on : nowNo == two.id}">
-          <div class="period_video" :class="{no_v: !two.videoVid}"></div>
+          <div class="period_video" :class="{no_v: !two.isVideo}"></div>
           <span class="period_num">第{{num+1}}讲</span>
-          <span v-if="!two.videoVid" class="no_video">(未更新)</span>
+          <span v-if="!two.isVideo" class="no_video">(未更新)</span>
           <span v-if="two.isFree" class="c_blue">(免费)</span>
           {{two.periodName}}
-          <span class="video_time fr" v-if="two.videoVid">{{two.videoLength}}分钟</span>
+          <span class="video_time fr">{{two.videoLength}}分钟</span>
         </div>
         <!-- <a :href="two.accessoryInfoDTOList[0].acUrl" v-if="two.accessoryInfoDTOList && userInfo && two.accessoryInfoDTOList.length && !minVideo">下载课件</a> -->
         <a href="javascript:" @click="noDown(two)" v-if="two.isDoc">下载课件</a>
@@ -63,7 +63,7 @@ export default {
     },
     videoPlay (data) {
       console.log(data)
-      if (!data.videoVid) {
+      if (!data.isVideo) {
         this.$msgBox({
           content: '该视频未更新',
           isShowCancelBtn: false
@@ -79,9 +79,8 @@ export default {
         })
         return false;
       }
-      
       this.$emit('playfunc', data)
-      
+
     }
   }
 }
