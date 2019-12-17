@@ -17,7 +17,7 @@
         <div class="tip_panel">
           提示: <br>
           支付成功前请勿手动关闭页面 <br>
-          二维码两小时内有效,请及时扫码支付
+          二维码30分钟内有效,请及时扫码支付
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
         <a href="javascript:" @click="close()" class="close iconfont">&#xe616;</a>
       </div>
       <div class="modal_body" v-if="courseData">
-        
+
         <table class="table">
           <tr>
             <th>课程名称</th>
@@ -96,7 +96,7 @@
   </div>
 </template>
 <script>
-  import {orderSave, orderInfo} from '~/api/order.js'
+  import {orderSave, orderTestSave, orderInfo} from '~/api/order.js'
   import QRCode from 'qrcode'
   export default {
     props: {
@@ -165,6 +165,7 @@
         let that = this;
         that.btntext = '正在提交...';
         console.log(that.order)
+        //orderSave
         orderSave(that.order).then(res => {
           res = res.data;
           console.log(res)
@@ -175,7 +176,7 @@
             this.ocl = setTimeout(function () {
               that.qrcode(res.data.payMessage);
             }, 100);
-            that.getOrderInfo(res.data.orderNo)
+            that.getOrderInfo(res.data.orderNo, res.data.serialNumber, that.order.payType)
           } else if (res.code >= 300 && res.code < 400) {
             this.$msgBox({
               content: res.msg,
@@ -197,17 +198,17 @@
           that.btntext = '重新提交';
         })
       },
-      getOrderInfo (no) {
+      getOrderInfo (no, serial, payType) {
         let that = this;
         if (this.checkPay) {
           return false;
         }
-        orderInfo({orderNo: no}).then(res => {
+        orderInfo({orderNo: no, serialNumber: serial, payType: payType}).then(res => {
           res = res.data
           console.log(res)
           if (res.data.orderStatus === 1) {
             setTimeout(function () {
-              that.getOrderInfo(no);
+              that.getOrderInfo(no, serial,payType);
             }, 1000);
           } else if (res.data.orderStatus === 2) {
             if (that.order.courseType === 3) {

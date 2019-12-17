@@ -54,7 +54,7 @@
               </tr>
             </tbody>
           </table>
-          <d-page v-if="pageObj.totalPage > 1" :page="pageObj" @btnClick="getPage"></d-page>
+          <d-page v-if="pageObj.totalPage > 0" :page="pageObj" @btnClick="getPage"></d-page>
         </div>
       </div>
     </div>
@@ -65,10 +65,13 @@
 import YHeader from '~/components/common/Header'
 import YFooter from '~/components/common/Footer'
 import YSide from '~/components/account/Side'
-// import DPage from '~/components/Page'
+import DPage from '~/components/Page'
 import {lecturerCourseList, coursePutaway, deleteCourse} from '~/api/account/course.js'
 import {getUserInfo} from '~/api/user.js'
 export default {
+  components: {
+      DPage
+  },
   data () {
     return {
       side: 'kcgl',

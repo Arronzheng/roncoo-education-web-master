@@ -7,6 +7,7 @@
         <ul class="course_tab clearfix">
           <li :class="{on: tab == 'info'}"><a href="javascript:" @click="tab = 'info'">课程介绍</a></li>
           <li :class="{on: tab == 'big'}"><a href="javascript:" @click="tab = 'big'">录播课程</a></li>
+          <li :class="{on: tab == 'talk'}"><a href="javascript:" @click="tab = 'talk'">学员讨论</a></li>
         </ul>
         <div class="content_info"  v-if="tab == 'info'">
           <div class="introduce" v-html="courseInfo.introduce"></div>
@@ -14,6 +15,10 @@
         </div>
         <div class="content_info"  v-if="tab == 'big'">
           <y-syllabus @playfunc="videoPlay" :list="courseInfo.chapterList" :nowNo="nowPeriodNo"></y-syllabus>
+        </div>
+        <div class="content_info"  v-if="tab == 'talk'">
+          <y-talk :list="courseInfo.courseCommentList" :nowNo="nowPeriodNo" :nowCourseId="courseInfo.id"></y-talk>
+<!--          <y-talk @playfunc="videoPlay" :list="courseInfo.chapterList" :nowNo=nowPeriodNo""></y-talk>-->
         </div>
       </div>
       <div class="layout_right">
@@ -39,6 +44,7 @@
 import YDisplay from '~/components/course/Display'
 import YFooter from '~/components/common/Footer'
 import YSyllabus from '~/components/course/Syllabus'
+import YTalk from '~/components/course/Talk'
 import YWatchVideo from '~/components/course/WatchVideo'
 import {courseDetail, userCourseDetail, chapterSign, periodVideoUrl} from '~/api/course.js'
 import {periodVideo} from "../../api/account/course";
@@ -47,7 +53,8 @@ export default {
     YFooter,
     YDisplay,
     YSyllabus,
-    YWatchVideo
+    YWatchVideo,
+    YTalk
   },
   head () {
     return {
@@ -190,7 +197,6 @@ export default {
     tencentPlay (data) {
         let $this = this
         let box = this.$refs.watchVideo.$refs.videobox;
-        box.style.backgroundImage = ''
         this.startPlay = true;
         this.playData = data;
     }

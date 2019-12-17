@@ -32,7 +32,7 @@ export default {
     nowNo: {
       type: String,
       default: ''
-    },
+    }
   },
   data (){
     return {

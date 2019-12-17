@@ -16,7 +16,7 @@
         <div class="zone_body">
           <ul class="clearfix course_list">
             <li v-for="(that, int) in item.zoneCourseList" :key="int">
-              <nuxt-link target="_self" :to="{name: 'view-id', params: {id: that.id}}">
+              <nuxt-link target="" :to="{name: 'view-id', params: {id: that.id}}">
                 <div class="img_box">
                   <img :src="that.courseLogo" alt="">
                 </div>

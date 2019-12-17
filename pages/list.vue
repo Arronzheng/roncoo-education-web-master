@@ -5,7 +5,7 @@
     <div class="course_content">
       <ul class="clearfix">
         <li v-for="(item, index) in pageObj.list" :key="index">
-          <nuxt-link target="_blank" :to="{name: 'view-id', params: {id: item.id}}" class="course_info">
+          <nuxt-link :to="{name: 'view-id', params: {id: item.id}}" class="course_info">
             <div class="img_box">
               <img class="course_img" :src="item.courseLogo" alt="">
             </div>

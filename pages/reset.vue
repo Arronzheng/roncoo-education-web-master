@@ -60,7 +60,7 @@
         <span v-if="service.prn">&nbsp;|&nbsp;</span>
         <a :href="'http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=' + service.prnNo" target="_blank" v-if="service.prn"><img src="../assets/image/prn_icon.png" class="prn_icon" alt="">&nbsp;{{service.prn}}</a>
       </p>
-      <p class="footer_text"><a href="http://www.roncoo.net/" class="lingke_link">领课教育云</a> 提供技术支持</p>
+      <p class="footer_text">知码在线 提供技术支持</p>
     </div>
   </div>
 </template>
@@ -122,7 +122,7 @@ export default {
     // 输入手机
     enterPhone () {
       if (this.obj.mobile.length === 11) {
-        if ((/^1[3|4|5|8|7][0-9]\d{4,8}$/.test(this.obj.mobile.trim()))) {
+        if ((/^1[3|4|5|8|7|9][0-9]\d{4,8}$/.test(this.obj.mobile.trim()))) {
           this.errTip0 = false;
           this.getCodeBtn = true;
         } else {

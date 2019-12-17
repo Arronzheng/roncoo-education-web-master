@@ -86,7 +86,7 @@ export default {
         if (result.code === 200) {
           this.payType = result.data.payType;
           this.qrcode(result.data.payMessage);
-          this.getOrderInfo(result.data.orderNo)
+          this.getOrderInfo(result.data.orderNo, result.data.serialNumber,this.payType)
         } else {
           if (result.code >= 300 && result.code < 400) {
             this.$msgBox({
@@ -128,14 +128,14 @@ export default {
       // console.log(int)
       this.getOrder(int);
     },
-    getOrderInfo (no) {
+    getOrderInfo (no, serial, payType) {
       let that = this;
-      orderInfo({orderNo: no}).then(res => {
+      orderInfo({orderNo: no, serialNumber: serial, payType: payType}).then(res => {
         // console.log(res)
         let result = res.data
         if (result.data.orderStatus === 1) {
           setTimeout(function () {
-            that.getOrderInfo(no);
+            that.getOrderInfo(no, serial, payType);
           }, 1000);
         } else if (result.data.orderStatus === 2) {
           that.payStep = 2;

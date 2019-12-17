@@ -12,7 +12,7 @@
         <div class="clearfix">
           <div class="video_box">
             <div class="detail_view" id="player" ref="videobox" :style="'background-image:url('+courseInfo.courseLogo+')'">
-              <my-video v-if="startPlay" :playData="playData"></my-video>
+              <my-video v-if="startPlay" :playData="playData" :nowNo="nowNo"></my-video>
             </div>
 <!--            <div v-else class="detail_view" ref="tencentBox" :style="'background-image:url('+courseInfo.courseLogo+')'">-->
 <!--&lt;!&ndash;              <video controls="controls" autoplay="autoplay"></video>&ndash;&gt;-->
@@ -43,7 +43,7 @@
               <button class="buy_btn" v-if="courseInfo.isFree && !isLogin" @click="goLogin">登录观看</button>
               <button class="buy_btn" id="buyBtn" v-else @click="buyCourse">立即购买</button>
             </div>
-            <!-- <a :class="{collect_btn: true, share: true, c_red: isShare}" href="javascript:"><span class="iconfont">&#xe610;</span>&nbsp;分享</a> -->
+<!--             <a :class="{collect_btn: true, share: true, c_red: isShare}" href="javascript:"><span class="iconfont">&#xe610;</span>&nbsp;分享</a>-->
           </div>
         </div>
       </div>
@@ -65,6 +65,14 @@ export default {
     courseInfo: {
       type: Object,
       default: null
+    },
+    startPlay: {
+        type: Boolean,
+        default: false
+    },
+    playData: {
+        type: Object,
+        default: () => {}
     }
   },
   data () {

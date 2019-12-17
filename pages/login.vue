@@ -75,7 +75,8 @@
         <span v-html="service.copyright"></span>
       </p>
       <p>
-        <a href="http://www.roncoo.net/" class="lingke_link">领课教育云</a> 提供技术支持
+<!--        <a href="http://www.roncoo.net/" class="lingke_link">领课教育云</a> 提供技术支持-->
+        知码在线 提供技术支持
         <span v-if="service.icp">&nbsp;|&nbsp;</span>
         <a href="http://www.miitbeian.gov.cn/" class="lingke_link" target="_blank">{{service.icp}}</a>
         <span v-if="service.prn">&nbsp;|&nbsp;</span>
@@ -195,8 +196,6 @@ export default {
           this.$store.commit('GET_TEMPORARYURL');
           this.$store.dispatch('GET_USERINFO',store=>{
             this.userInfo = this.$store.state.userInfo;
-            console.log(this.userInfo)
-            console.log('llllllll')
             window.location.href = this.$store.state.temporaryUrl;
           });
         } else {
