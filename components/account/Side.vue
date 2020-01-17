@@ -9,12 +9,22 @@
       </ul>
     </div>
     <div class="menu_panel">
+      <h3 class="title"><i class="iconfont">&#xe6be;</i>课程中心</h3>
+      <ul class="menus">
+        <li :class="{on: type == 'wdkc'}"><router-link :to="{name: 'account-course'}">我的课程</router-link></li>
+        <li :class="{on: type == 'wdsc'}"><router-link :to="{name: 'account-collect'}">我的收藏</router-link></li>
+        <li :class="{on: type == 'xxjl'}"><router-link :to="{name: 'account-study'}">学习记录</router-link></li>
+      </ul>
+    </div>
+    <div class="menu_panel">
       <h3 class="title"><i class="iconfont">&#xe60a;</i>个人资料</h3>
       <ul class="menus">
         <li :class="{on: type == 'grxx'}"><router-link :to="{name: 'account'}">个人信息</router-link></li>
         <li :class="{on: type == 'xgmm'}"><router-link :to="{name: 'account-reset'}">修改密码</router-link></li>
         <li :class="{on: type == 'wddd'}"><router-link :to="{name: 'account-order'}">我的订单</router-link></li>
-        <li :class="{on: type == 'xxjl'}"><router-link :to="{name: 'account-study'}">学习记录</router-link></li>
+        <li :class="{on: type == 'wddz'}"><router-link :to="{name: 'account-address'}">我的地址</router-link></li>
+        <li :class="{on: type == 'wdgz'}"><router-link :to="{name: 'account-concern'}">我的关注</router-link></li>
+        <li :class="{on: type == 'wdtz'}"><router-link :to="{name: 'account-notify'}">我的通知</router-link></li>
       </ul>
     </div>
   </header>

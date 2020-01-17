@@ -16,7 +16,7 @@
           <span class="video_time fr">{{two.videoLength}}分钟</span>
         </div>
         <!-- <a :href="two.accessoryInfoDTOList[0].acUrl" v-if="two.accessoryInfoDTOList && userInfo && two.accessoryInfoDTOList.length && !minVideo">下载课件</a> -->
-        <a href="javascript:" @click="noDown(two)" v-if="two.isDoc">下载课件</a>
+<!--        <a href="javascript:" @click="noDown(two)" v-if="two.isDoc">下载课件</a>-->
       </div>
     </div>
   </div>
@@ -32,6 +32,14 @@ export default {
     nowNo: {
       type: String,
       default: ''
+    },
+    isPay: {
+        type: Number,
+        default: 0
+    },
+    isVipFree: {
+      type: Number,
+      default: 0
     }
   },
   data (){
@@ -51,13 +59,15 @@ export default {
         return false;
       }
       if (!item.isFree) {
-        this.$msgBox({
-          content: '购买后才可以下载',
-          isShowCancelBtn: false
-        }).then(() => {
-          // this.openOrder()
-        }).catch(() => {})
-        return false;
+          if(!this.isPay){
+            this.$msgBox({
+              content: '购买后才可以下载',
+              isShowCancelBtn: false
+            }).then(() => {
+              this.openOrder()
+            }).catch(() => {})
+            return false;
+          }
       }
       window.location.href = item.docUrl
     },
@@ -70,7 +80,7 @@ export default {
         }).catch(() => {})
         return false;
       }
-      if (!this.$store.state.tokenInfo) {
+      if (!this.$store.state.userInfo) {
         this.$msgBox({
           content: '请先登录'
         }).then(res => {

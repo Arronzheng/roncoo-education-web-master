@@ -25,13 +25,21 @@
             <div class="form_group">
               <div class="label">重置密码:</div>
               <div class="form_ctl">
-                  <input type="password" v-model="pobj.newPassword" class="form_input" placeholder="请输入密码">
+                  <input :type="pwType" v-model="pobj.newPassword" class="form_input" placeholder="请输入密码">
+                  <i class="fa fa-eye" @click="showPW">
+                    <img v-if="pwType === 'password'" src="../../assets/image/close_eye.png">
+                    <img v-else src="../../assets/image/eye.png">
+                  </i>
               </div>
             </div>
             <div class="form_group">
               <div class="label">确定密码:</div>
               <div class="form_ctl">
-                  <input type="password" v-model="pobj.confirmPassword" class="form_input" placeholder="请再次输入新密码">
+                  <input :type="repwType" v-model="pobj.confirmPassword" class="form_input" placeholder="请再次输入新密码">
+                  <i class="fa fa-eye" @click="showREPW">
+                    <img v-if="repwType === 'password'" src="../../assets/image/close_eye.png">
+                    <img v-else src="../../assets/image/eye.png">
+                  </i>
               </div>
             </div>
             <div class="form_group">
@@ -66,7 +74,9 @@ export default {
         code: '',
         newPassword: '',
         confirmPassword: ''
-      }
+      },
+      pwType: 'password',
+      repwType: 'password'
     }
   },
   methods: {
@@ -128,6 +138,20 @@ export default {
           isShowCancelBtn: false
         })
       })
+    },
+    showPW () {
+        if (this.pwType === 'password') {
+            this.pwType = 'text'
+        } else {
+            this.pwType = 'password'
+        }
+    },
+    showREPW () {
+        if (this.repwType === 'password') {
+            this.repwType = 'text'
+        } else {
+            this.repwType = 'password'
+        }
     }
   },
   mounted () {
@@ -143,4 +167,17 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss" scoped>
 @import '~/assets/css/account.scss';
+  .fa {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 430px;
+    top:8px;
+    font-size: 20px;
+    cursor: pointer;
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
 </style>

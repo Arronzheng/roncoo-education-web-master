@@ -4,7 +4,7 @@ import { setStore, getStore, removeStore, setSession, getSession } from '../util
 // import axios from '~/api/main.js'
 
 export default {
-  INIT_WEB: (state) => {
+  INIT_WEB: (state, req) => {
     let token = cookie.getInClient(state.clientData.tokenName);
     if (token) {
       let userInfo = JSON.parse(getStore('OcUserInfo'));

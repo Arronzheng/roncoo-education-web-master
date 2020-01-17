@@ -15,6 +15,22 @@ export const userLogin = (params={}) => {
 export const getUserInfo = (params={}) => {
   return http().post('/user/auth/user/ext/view', params)
 }
+// 获取AppId
+export const getAppId = (params={}) => {
+  return http().post('/user/api/user/getAppId', params)
+}
+// 是否会员
+export const isVip = (params={}) => {
+  return http().post('/user/auth/user/ext/isVip', params)
+}
+// 会员订单
+export const vipOrderSave = (params={}) => {
+  return http().post('/user/auth/svip/pay', params)
+}
+// 会员订单
+export const vipOrderInfo = (params={}) => {
+  return http().post('/user/auth/svip/view', params)
+}
 // 课程详情
 export const userCourseDetail = (params={}) => {
   return http().post('/course/auth/course/audit/view', params)

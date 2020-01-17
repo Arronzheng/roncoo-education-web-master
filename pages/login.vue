@@ -13,16 +13,27 @@
             </div>
           </div>
           <div class="form_body" v-if="tabp == 1">
-            <form action="" @submit="loginSubmit">
-              <input type="text" v-model="obj.mobile" placeholder="请输入手机号或邮箱">
-              <div class="error_msg">{{errTip1}}</div>
-              <input type="password" v-model="obj.password" placeholder="6-20位密码，可用数字/字母/符号组合">
-              <div class="error_msg">{{errTip2}}</div>
-              <input type="submit" v-if="subState" disabled="disabled" value="登录中···" class="btn" />
-              <input type="submit" v-else value="登录" class="btn" />
-            </form>
-            <input type="checkbox" class="check"><span class="next_auto">下次自动登录</span>
-            <nuxt-link class="is_go" :to="{name: 'reset'}">忘记密码</nuxt-link>
+            <div v-if="!wxlogin">
+              <form action="" @submit="loginSubmit">
+                <input type="text" v-model="obj.mobile" placeholder="请输入手机号或邮箱">
+                <div class="error_msg">{{errTip1}}</div>
+                <input :type="pwType" v-model="obj.password" placeholder="6-20位密码，可用数字/字母/符号组合">
+                <div class="error_msg">{{errTip2}}</div>
+                <i class="fa fa-eye" @click="showPW">
+                  <img v-if="pwType === 'password'" src="../assets/image/close_eye.png">
+                  <img v-else src="../assets/image/eye.png">
+                </i>
+                <input type="submit" v-if="subState" disabled="disabled" value="登录中···" class="btn" />
+                <input type="submit" v-else value="登录" class="btn" />
+                <input type='button' id="wx_login_container" @click="wxLogin" value="微信登录" class="we_btn" />
+              </form>
+              <input type="checkbox" class="check"><span class="next_auto">下次自动登录</span>
+              <nuxt-link class="is_go" :to="{name: 'reset'}">忘记密码</nuxt-link>
+            </div>
+            <div id="form_body" ref="fmb"></div>
+            <div v-if="wxlogin">
+              <a href="#" @click="pwlogin" class="return_btn"><img class="return_img" src="~/assets/image/return.svg" alt="">返回</a>
+            </div>
           </div>
           <div class="form_body r180" v-if="tabp == 2">
             <form action="" @submit="regSubmit">
@@ -31,8 +42,16 @@
                 <input type="text" name="code" placeholder="请输入手机验证码" class="phone" v-model="pobj.code" maxlength="6">
                 <y-button :mobile="pobj.mobile"></y-button>
               </div>
-              <input type="password" v-model="pobj.password" placeholder="6-20位密码，可用数字/字母/符号组合">
-              <input type="password" v-model="pobj.repassword" placeholder="确认密码">
+              <input :type="repwType" v-model="pobj.password" placeholder="6-20位密码，可用数字/字母/符号组合">
+              <i class="refa fa-eye" @click="showREPW">
+                <img v-if="repwType === 'password'" src="../assets/image/close_eye.png">
+                <img v-else src="../assets/image/eye.png">
+              </i>
+              <input :type="agpwType" v-model="pobj.repassword" placeholder="确认密码">
+              <i class="agfa fa-eye" @click="showAGPW">
+                <img v-if="agpwType === 'password'" src="../assets/image/close_eye.png">
+                <img v-else src="../assets/image/eye.png">
+              </i>
               <div class="mgt20 font_14">
                 <input type="checkbox" id="tonyi" v-model="pobj.check">
                 <label for="tonyi">我已经阅读并同意</label><a href="jvascript:" class="c_blue" @click="xieyi = true">《用户协议》</a>
@@ -42,24 +61,24 @@
             </form>
           </div>
         </div>
-        <div class="login_form" v-else>
-          <div class="login_title is_login">欢迎来到{{clientData.name}}</div>
-          <div class="form_body">
-            <div class="img_box">
-              <img v-if="userInfo.headImgUrl" :src="userInfo.headImgUrl" alt="" />
-              <img v-else src="../assets/image/friend.jpg" alt="" />
-            </div>
-            <p class="hellow_text">欢迎来到{{clientData.name}}</p>
-            <ul class="btn_box clearfix">
-              <li><nuxt-link :to="{name: 'account-teacher'}">用户中心</nuxt-link></li>
-              <li><nuxt-link :to="{name: 'account-study'}">学习记录</nuxt-link></li>
-              <li><nuxt-link :to="{name: 'account-order'}">我的订单</nuxt-link></li>
-            </ul>
-            <div>
-              <a href="javascript:" @click="signOut" class="out_btn">退出登录</a>
-            </div>
-          </div>
-        </div>
+<!--        <div class="login_form" v-else>-->
+<!--          <div class="login_title is_login">欢迎来到{{clientData.name}}</div>-->
+<!--          <div class="form_body">-->
+<!--            <div class="img_box">-->
+<!--              <img v-if="userInfo.headImgUrl" :src="userInfo.headImgUrl" alt="" />-->
+<!--              <img v-else src="../assets/image/friend.jpg" alt="" />-->
+<!--            </div>-->
+<!--            <p class="hellow_text">欢迎来到{{clientData.name}}</p>-->
+<!--            <ul class="btn_box clearfix">-->
+<!--              <li><nuxt-link :to="{name: 'account-teacher'}">用户中心</nuxt-link></li>-->
+<!--              <li><nuxt-link :to="{name: 'account-study'}">学习记录</nuxt-link></li>-->
+<!--              <li><nuxt-link :to="{name: 'account-order'}">我的订单</nuxt-link></li>-->
+<!--            </ul>-->
+<!--            <div>-->
+<!--              <a href="javascript:" @click="signOut" class="out_btn">退出登录</a>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
     </div>
     <div class="xieyi" v-if="xieyi" @click.self="xieyi = false">
@@ -91,7 +110,7 @@
 <script>
   import YHeader from '~/components/common/Header'
   import YButton from '~/components/common/CodeButton'
-  import {userLogin, getUserInfo, register} from '~/api/user.js'
+  import {userLogin, getUserInfo, register, getAppId} from '~/api/user.js'
 export default {
     head () {
       return {
@@ -107,6 +126,10 @@ export default {
                 name: 'description',
                 content: this.webInfo.websiteDesc
             }
+        ],
+        script: [
+            {src: "https://res.wx.qq.com/connect/zh_CN/htmledition/js/jquery.min.js" },
+            {src: "http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js" }
         ]
       }
   },
@@ -136,7 +159,11 @@ export default {
         password: '',
         repassword: '',
         check: false
-      }
+      },
+      wxlogin: false,
+      pwType: 'password',
+      repwType: 'password',
+      agpwType: 'password'
     }
   },
   async asyncData(context) {
@@ -166,6 +193,7 @@ export default {
       setTimeout(function(){
         console.log(int)
         _that.tabp = int
+        _that.wxlogin = false
       },200)
     },
     loginSubmit (e) {
@@ -196,7 +224,11 @@ export default {
           this.$store.commit('GET_TEMPORARYURL');
           this.$store.dispatch('GET_USERINFO',store=>{
             this.userInfo = this.$store.state.userInfo;
-            window.location.href = this.$store.state.temporaryUrl;
+            if (this.$store.state.temporaryUrl) {
+              window.location.href = this.$store.state.temporaryUrl;
+            } else {
+                this.$router.push({name: 'index'});
+            }
           });
         } else {
           this.errTip2 = res.data.msg;
@@ -270,7 +302,16 @@ export default {
             confirmBtnText: '立即登录',
             isShowCancelBtn: false
           }).then(() => {
-            this.changetab(1)
+              this.$store.commit('SET_TOKEN', res.data.data.token);
+              this.$store.commit('GET_TEMPORARYURL');
+              this.$store.dispatch('GET_USERINFO',store=>{
+                  this.userInfo = this.$store.state.userInfo;
+                  if (this.$store.state.temporaryUrl) {
+                      window.location.href = this.$store.state.temporaryUrl;
+                  } else {
+                      this.$router.push({name: 'index'});
+                  }
+              });
           }).catch(() => {
             this.changetab(1)
           })
@@ -295,6 +336,46 @@ export default {
           isShowCancelBtn: false
         }).catch(() => {})
       })
+    },
+    wxLogin () {
+        this.wxlogin = true
+        getAppId().then(res => {
+            let obj = new WxLogin({
+                self_redirect: false,
+                id: "form_body",
+                appid: res.data.data.appid,
+                scope: "snsapi_login",
+                redirect_uri: encodeURIComponent(res.data.data.redirectUri),
+                state: res.data.data.state,
+                style: "black",
+                href: "", //https://某个域名下的css文件
+            });
+        })
+    },
+    pwlogin () {
+        this.$refs.fmb.innerHTML = ''
+        this.wxlogin = false
+    },
+    showPW () {
+      if (this.pwType === "text") {
+          this.pwType = "password"
+      }else{
+          this.pwType = "text"
+      }
+    },
+    showREPW () {
+        if (this.repwType === "text") {
+            this.repwType = "password"
+        }else{
+            this.repwType = "text"
+        }
+    },
+    showAGPW () {
+        if (this.agpwType === "text") {
+            this.agpwType = "password"
+        }else{
+            this.agpwType = "text"
+        }
     }
   },
   mounted () {
@@ -415,9 +496,18 @@ export default {
         border: none;
         outline: none;
         cursor: pointer;
+      }
+      &.we_btn {
+        width: 320px;
+        background: green;
+        color: white;
+        border: none;
+        outline: none;
+        cursor: pointer;
         margin-bottom: 20px;
       }
     }
+
     .error_msg {
       width: 310px;
       color: #D51423;
@@ -602,6 +692,59 @@ export default {
       left: 50%;
       margin-left: -83px;
       border-radius: 6px;
+    }
+  }
+  .return_btn {
+    width: 50px;
+    height: 50px;
+    text-decoration:none;
+    &:hover {
+      color:#333333;
+      background:rgb(235, 235, 235);
+    }
+  }
+  .return_img {
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+  }
+  .fa{
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 50px;
+    top:158px;
+    font-size: 20px;
+    cursor: pointer;
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  .refa{
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 50px;
+    top:162px;
+    font-size: 20px;
+    cursor: pointer;
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  .agfa{
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 50px;
+    top:232px;
+    font-size: 20px;
+    cursor: pointer;
+    img {
+      width: 20px;
+      height: 20px;
     }
   }
 }

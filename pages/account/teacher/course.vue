@@ -84,7 +84,7 @@ export default {
         auditStatus: '',
         lecturerUserNo: '',
         pageCurrent: 1,
-        pageSize: 20
+        pageSize: 5
       },
       pageObj: {
         pageCurrent: '',

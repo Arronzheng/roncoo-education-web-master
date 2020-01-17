@@ -1,26 +1,36 @@
 <template>
   <div class="detail_video">
     <div class="video_header clearfix">
-      <ul class="header_left clearfix" v-if="userInfo">
-        <router-link :to="{name: 'index'}"><li class="return_btn"><img class="return_img" src="~/assets/image/return.svg" alt=""></li></router-link>
+      <ul class="header_left clearfix">
+        <router-link :to="{name: 'list'}"><li class="return_btn"><img class="return_img" src="~/assets/image/return.svg" alt=""></li></router-link>
+<!--        <li class="return_btn" @click="$router.back()"><img class="return_img" src="~/assets/image/return.svg" alt=""></li>-->
         <li class="vider_title">
           {{courseInfo.courseName}}
-          <!-- <a :class="{collect_btn: true, noposi: true}" href="javascript:" @click="setCollection"><span class="iconfont">&#xe670;</span>&nbsp;收藏</a> -->
+           <a :class="[{collect_btn: true, noposi: true, c_red: isCollection}]" href="javascript:" @click="setCollection(courseInfo.id)"><span class="iconfont">&#xe670;</span>&nbsp;收藏</a>
         </li>
       </ul>
-      <ul class="header_right clearfix">
-        <li v-if="userInfo.roleType === 2"><nuxt-link :to="{name: 'account-teacher-course'}" class="left_col">讲师中心</nuxt-link></li>
-        <li><nuxt-link :to="{name: 'account-order'}" class="left_col">我的订单</nuxt-link></li>
-        <li>
-          <nuxt-link :to="{name: 'account'}" :class="{left_col: true, c_gold: isVip}">{{userInfo.mobile}}</nuxt-link>
-          <img v-if="isVip" src="~/assets/image/vip_icon.png" @click="goVip" alt="" class="vip_icon">
-        </li>
-       <!--  <li v-else>
-          <a href="javascript:" @click="login" class="left_col">登录</a>
-          <nuxt-link to="login?tab=2" class="pd_0">注册</nuxt-link>
-        </li> -->
-        <!-- <li><a href="#">退出</a></li> -->
-      </ul>
+<!--      <ul class="header_right clearfix" v-if="userInfo">-->
+<!--        <li v-if="isTeacher"><nuxt-link :to="{name: 'account-teacher-course'}" class="left_col">讲师中心</nuxt-link></li>-->
+<!--        <li><nuxt-link :to="{name: 'account-order'}" class="left_col">我的订单</nuxt-link></li>-->
+<!--        <li>-->
+<!--          <nuxt-link :to="{name: 'account'}" :class="{left_col: true, c_gold: isVip}">{{userInfo.mobile}}</nuxt-link>-->
+<!--          <img v-if="isVip" src="~/assets/image/vip_icon.png" @click="goVip" alt="" class="vip_icon">-->
+<!--        </li>-->
+<!--       &lt;!&ndash;  <li v-else>-->
+<!--          <a href="javascript:" @click="login" class="left_col">登录</a>-->
+<!--          <nuxt-link to="login?tab=2" class="pd_0">注册</nuxt-link>-->
+<!--        </li> &ndash;&gt;-->
+<!--        &lt;!&ndash; <li><a href="#">退出</a></li> &ndash;&gt;-->
+<!--      </ul>-->
+      <nuxt-link v-if="userInfo" class="h_nav_link" :to="{name: 'account-course'}">
+        个人中心
+      </nuxt-link>
+      <a v-if="userInfo" class="h_nav_a" href="javascript:" @click="signOut">
+        <span class="singOut">退出登录</span>
+      </a>
+      <a v-else class="h_nav_a" @click="login">
+        登录/注册
+      </a>
     </div>
     <div class="video_body">
       <div class="video_content clearfix" :class="{show_panel: cateType}">
@@ -30,7 +40,7 @@
           </div>
 <!--          <span class="iconfont close_video" v-if="showTop" @click="stopVideo">&#xe616;</span>-->
         </div>
-        <div class="video_info">
+        <div class="video_info" v-if="isK12">
           <a href="javascript:" @click="changeTab(1)" :class="{on: cateType == 1}">
             <i class="iconfont">&#xe908;</i>
             <p>章节</p>
@@ -40,7 +50,7 @@
             <p>课件</p>
           </a>
         </div>
-        <div class="cate_panel">
+        <div class="cate_panel" v-if="isK12">
           <div  v-if="cateType == 1">
             <dl v-for="(one, index) in courseInfo.chapterList" :key="index">
               <dt>第{{index + 1}}章：{{one.chapterName}}</dt>
@@ -65,6 +75,9 @@
 </template>
 <script>
 import MyVideo from '../common/MyVideo'
+import {setCollection} from '~/api/account/collection.js'
+import {collectionArr} from '~/api/account/user.js'
+import {myHttp} from '~/utils/myhttp.js'
 export default {
     components: {
         MyVideo
@@ -95,10 +108,24 @@ export default {
       showTop: false,
       cateType: 0,
       clientData: this.$store.state.clientData,
-      userInfo: ''
+      userInfo: '',
+      isTeacher: false,
+      isK12: false,//暂时固定为false
+      isCollection: false
     }
   },
   methods: {
+    signOut () {
+        this.$store.commit('SIGN_OUT');
+        this.userInfo = '';
+        console.log(this.$route.path)
+        if (this.$route.path.includes('account')) {
+            this.$router.push({name: 'login'})
+        } else {
+            window.location.reload()
+        }
+        console.log('退出登录')
+    },
     changeTab (int) {
       if (int === this.cateType) {
         this.cateType = 0;
@@ -108,6 +135,10 @@ export default {
     },
     goVip () {
       this.$router.push({name: 'vip'})
+    },
+    login () {
+        // this.$store.commit('SET_TEMPORARYURL');
+        this.$router.push({name: 'login'});
     },
     // 下载附件
     noDown (item) {
@@ -121,31 +152,75 @@ export default {
         return false;
       }
       if (!item.isFree) {
-        this.$msgBox({
-          content: '购买后才可以下载',
-          isShowCancelBtn: false
-        }).then(() => {
-          // this.openOrder()
-        }).catch(() => {})
-        return false;
+          if(!this.courseInfo.isPay){
+            this.$msgBox({
+              content: '购买后才可以下载',
+              isShowCancelBtn: false
+            }).then(() => {
+              // this.openOrder()
+            }).catch(() => {})
+            return false;
+          }
       }
       window.location.href = item.docUrl
     },
     videoPlay (data) {
       console.log(data)
-      if (data.isVideo) {
+      if (!data.isVideo) {
         this.$msgBox({
           content: '该视频未更新',
           isShowCancelBtn: false
         }).catch(() => {})
         return false;
       }
+      if (!this.$store.state.tokenInfo) {
+            this.$msgBox({
+                content: '请先登录'
+            }).then(res => {
+                this.$store.dispatch('REDIRECT_LOGIN');
+            }).catch(() => {
+            })
+            return false;
+        }
       this.$emit('playfunc', data)
+    },
+    setCollection (id) {
+        myHttp.call(this, {
+            method: setCollection,
+            params: {
+                courseId: id
+            }
+        }).then(res => {
+            if (res.code === 200 && res.data > 0) {
+                this.$msgBox({
+                    content: '收藏成功',
+                    isShowCancelBtn: false
+                }).then(res => {
+                    this.isCollection = true
+                })
+            }
+        })
     }
   },
-  mounted () {
-    this.userInfo = this.$store.state.userInfo;
-    console.log(this.$store.state.userInfo)
+  async mounted() {
+      this.userInfo = this.$store.state.userInfo;
+      if (this.$store.state.tokenInfo && this.userInfo) {
+          this.name = this.userInfo.mobile
+          if (this.userInfo.userType === 2 || this.userInfo.userType === 4) {
+              this.isTeacher = true
+          }
+          if (this.userInfo.isVip === 1) {
+              this.isVip = true
+          } else {
+              this.isVip = false
+          }
+          const result = await collectionArr({userNo:this.userInfo.userNo})
+          if(result.data.data.courseUserCollections.indexOf(this.courseInfo.id) === -1){
+              this.isCollection = false
+          } else {
+              this.isCollection = true
+          }
+      }
   }
 }
 </script>
@@ -163,14 +238,6 @@ export default {
     }
     .header_left {
       float: left;
-      a {
-        color: #999;
-        margin-left: 10px;
-        &:hover {
-          text-decoration: none;
-          color: #333;
-        }
-      }
       .left_30 {
         margin-left: 30px;
       }
@@ -358,6 +425,50 @@ export default {
   .info_box {
     pre {
       white-space: inherit;
+    }
+  }
+  .h_nav_link {
+    display: inline-block;
+    margin-left: 280px;
+    width: 106px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 14px;
+    border: 1px solid #999;
+    color: #999;
+    background: #fff;
+    position: absolute;
+    top: 15px;
+    right: 812px;
+    cursor: pointer;
+    &:hover {
+      text-decoration: none;
+      color: #D51423;
+      border-color: #D51423;
+    }
+  }
+  .h_nav_a {
+    display: inline-block;
+    margin-left: 280px;
+    width: 106px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 14px;
+    border: 1px solid #999;
+    color: #999;
+    background: #fff;
+    position: absolute;
+    top: 15px;
+    right: 700px;
+    cursor: pointer;
+    &:hover {
+      text-decoration: none;
+      color: #D51423;
+      border-color: #D51423;
     }
   }
 </style>

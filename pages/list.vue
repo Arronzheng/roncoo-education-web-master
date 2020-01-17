@@ -5,13 +5,13 @@
     <div class="course_content">
       <ul class="clearfix">
         <li v-for="(item, index) in pageObj.list" :key="index">
-          <nuxt-link :to="{name: 'view-id', params: {id: item.id}}" class="course_info">
+          <nuxt-link :to="{name: 'view-id', params: {id: item.id, isVip: isVip}}" class="course_info">
             <div class="img_box">
               <img class="course_img" :src="item.courseLogo" alt="">
             </div>
             <p>{{item.courseName}}</p>
             <span class="price_box" v-if="item.isFree">免费</span>
-            <span class="price_box" v-else>￥{{item.courseOriginal.toFixed(2)}}<span class="font_12 padl_10" v-if="openVip && item.courseOriginal !== item.courseDiscount">SVIP:{{item.courseDiscount ? '￥' + item.courseDiscount.toFixed(2) : '免费'}}</span></span>
+            <span class="price_box" v-else>￥{{item.courseOriginal.toFixed(2)}}<span class="font_12 padl_10" v-if="openVip && item.courseOriginal !== item.courseSvipDiscount">SVIP:{{item.courseSvipDiscount ? '￥' + item.courseSvipDiscount.toFixed(2) : '免费'}}</span></span>
           </nuxt-link>
         </li>
       </ul>
@@ -52,7 +52,8 @@ export default {
       openVip: false,
       free: '',
       activityList: [],
-      classList: []
+      classList: [],
+      isVip: false
     }
   },
   async asyncData (context) {
@@ -173,6 +174,11 @@ export default {
   mounted () {
     if (this.webInfo && this.webInfo.isEnableVip) {
       this.openVip = true
+    }
+    if(this.$store.state.userInfo && this.$store.state.userInfo.isVip === 1){
+        this.isVip = true
+    }else{
+        this.isVip = false
     }
     courseChange(this)
     if (this.$route.query.free) {

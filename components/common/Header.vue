@@ -1,22 +1,25 @@
 <template>
   <div class="h_header">
-    <div class="h_top" v-if="!hideTop">
-      <div class="h_top_body">
-        <ul class="top_list clearfix" v-if="userInfo">
-          <li><a :href="mainUrl+'/recruit'">讲师招募</a></li>
-          <li v-if="isTeacher"><nuxt-link :to="{name: 'account-teacher'}">讲师中心</nuxt-link></li>
-          <li class="s_left"><nuxt-link :to="{name: 'account-order'}">我的订单</nuxt-link></li>
-          <li class="s_left">
-            <nuxt-link :to="{name: 'account'}">{{userInfo.mobile}}</nuxt-link>
-          </li>
-          <li><a href="javascript:" @click="signOut">退出</a></li>
-        </ul>
-        <ul class="top_list clearfix" v-else>
-          <li class="s_left"><a href="javascript:" @click="login">登录</a></li>
-          <li><a href="javascript:" @click="register">注册</a></li>
-        </ul>
-      </div>
-    </div>
+<!--    <div class="h_top" v-if="!hideTop">-->
+<!--      <div class="h_top_body">-->
+<!--        <ul class="top_list clearfix" v-if="userInfo">-->
+<!--          <div v-if="isOpenLecture">-->
+<!--            <li><a :href="mainUrl+'/recruit'">讲师招募</a></li>-->
+<!--            <li v-if="isTeacher"><nuxt-link :to="{name: 'account-teacher'}">讲师中心</nuxt-link></li>-->
+<!--          </div>-->
+<!--          <li class="s_left"><nuxt-link :to="{name: 'account-order'}">我的订单</nuxt-link></li>-->
+<!--          <li class="s_left">-->
+
+<!--            <nuxt-link :to="{name: 'account'}">{{userInfo.mobile}}</nuxt-link>-->
+<!--          </li>-->
+<!--          <li><a href="javascript:" @click="signOut">退出</a></li>-->
+<!--        </ul>-->
+<!--        <ul class="top_list clearfix" v-else>-->
+<!--          <li class="s_left"><a href="javascript:" @click="login">登录</a></li>-->
+<!--          <li><a href="javascript:" @click="register">注册</a></li>-->
+<!--        </ul>-->
+<!--      </div>-->
+<!--    </div>-->
     <div class="h_nav">
       <div class="h_logo">
         <a :href="mainUrl">
@@ -28,6 +31,15 @@
           <nuxt-link :class="{active: isNow === item.navUrl}" :to="item.navUrl" :target="item.target">{{item.navTitle}}</nuxt-link>
         </li>
       </ul>
+      <nuxt-link v-if="!hideTop && userInfo" class="h_nav_link" :to="{name: 'account-course'}">
+        <span class="personal">个人中心</span>
+      </nuxt-link>
+      <a v-if="!hideTop && userInfo" class="h_nav_a" href="javascript:" @click="signOut">
+        <span class="singOut">退出登录</span>
+      </a>
+      <a v-if="!hideTop && !userInfo" class="h_nav_a" @click="login">
+        登录/注册
+      </a>
       <nuxt-link v-if="hideTop" :to="{name: 'index'}" class="go_index font_14 c_blue">返回首页</nuxt-link>
     </div>
   </div>
@@ -54,7 +66,8 @@ export default {
       name: '',
       isTeacher: false,
       navList: this.$store.state.navList.list,
-      isNow: ''
+      isNow: '',
+      isOpenLecture: false
     }
   },
   methods: {
@@ -174,6 +187,50 @@ export default {
         color: red;
         text-decoration: none;
       }
+    }
+  }
+  .h_nav_link {
+    display: inline-block;
+    margin-left: 174px;
+    width: 106px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 14px;
+    border: 1px solid #999;
+    color: #999;
+    background: #fff;
+    position: absolute;
+    top: 40px;
+    right: 112px;
+    cursor: pointer;
+    &:hover {
+      text-decoration: none;
+      color: #D51423;
+      border-color: #D51423;
+    }
+  }
+  .h_nav_a {
+    display: inline-block;
+    margin-left: 280px;
+    width: 106px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 14px;
+    border: 1px solid #999;
+    color: #999;
+    background: #fff;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    cursor: pointer;
+    &:hover {
+      text-decoration: none;
+      color: #D51423;
+      border-color: #D51423;
     }
   }
 </style>

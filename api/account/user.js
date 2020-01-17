@@ -16,6 +16,10 @@ export const updataLecturerInfo = (params={}) => {
 export const updatePassword = (params={}) => {
   return http().post('/user/api/user/update/password', params)
 }
+//修改手机号码
+export const updatePhone = (params={}) => {
+  return http().post('/user/auth/user/ext/updatePhone', params)
+}
 // 银行卡信息
 export const cardInfo = (params={}) => {
   return http().post('/user/auth/lecturer/ext/view', params)
@@ -32,7 +36,15 @@ export const teacherCashList = (params={}) => {
 export const bindCard = (params={}) => {
   return http().post('/user/auth/lecturer/ext/update', params)
 }
+// 学习课程
+export const courseList = (params={}) => {
+  return http().post('/course/auth/course/user/study/list', params)
+}
 // 学习记录
 export const studyList = (params={}) => {
   return http().post('/course/auth/course/user/study/log/list', params)
+}
+// 所有收藏课程
+export const collectionArr = (params={}) => {
+  return http().post('/user/auth/user/ext/collections', params)
 }

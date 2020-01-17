@@ -23,7 +23,11 @@
             <p>{{courseInfo.courseName}}</p>
             <div class="view_price">
               <div>
-                价格:<span v-if="!courseInfo.isFree">￥{{courseInfo.courseOriginal ? courseInfo.courseOriginal.toFixed(2) : '0.00'}}</span>
+                <div v-if="!courseInfo.isFree">
+                  价格:<span >￥{{courseInfo.courseOriginal ? courseInfo.courseOriginal.toFixed(2) : '0.00'}}</span><br/>
+                  SVIP:<span style="font-size: 16px">￥{{courseInfo.courseSvipDiscount ? courseInfo.courseSvipDiscount.toFixed(2) : '0.00'}}</span>&nbsp;&nbsp;
+                  <a href="/vip" style="color: #0099FF">立即开通 ></a>
+                </div>
                 <span v-else>免费</span>
               </div>
             </div>

@@ -27,6 +27,10 @@ export const continuePay = (params={}) => {
 export const orderInfo = (params={}) => {
   return http().post('/course/auth/order/info/view', params)
 }
+// 完善订单地址
+export const completeOrderSite = (params={}) => {
+  return http().post('/course/auth/order/info/complete', params)
+}
 // 课程分类
 export const infiniteCate = (params={}) => {
   return http().post('/course/api/course/category/list', params)

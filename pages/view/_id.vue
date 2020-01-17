@@ -1,12 +1,12 @@
 <template>
   <div class="course_detail">
-    <y-watch-video  v-if="courseInfo.isPay" :courseInfo="courseInfo" @playfunc="videoPlay" :nowNo="nowPeriodNo" :startPlay="startPlay" :playData="playData" ref="watchVideo"></y-watch-video>
+    <y-watch-video  v-if="courseInfo.isFree || courseInfo.isPay || vipFree" :courseInfo="courseInfo" @playfunc="videoPlay" :nowNo="nowPeriodNo" :startPlay="startPlay" :playData="playData" ref="watchVideo"></y-watch-video>
     <y-display v-else :courseInfo="courseInfo" :startPlay="startPlay" :playData="playData" ref="watchVideo"></y-display>
     <div class=" detail_info detail_box clearfix">
       <div class="layout_left">
         <ul class="course_tab clearfix">
-          <li :class="{on: tab == 'info'}"><a href="javascript:" @click="tab = 'info'">课程介绍</a></li>
           <li :class="{on: tab == 'big'}"><a href="javascript:" @click="tab = 'big'">录播课程</a></li>
+          <li :class="{on: tab == 'info'}"><a href="javascript:" @click="tab = 'info'">课程介绍</a></li>
           <li :class="{on: tab == 'talk'}"><a href="javascript:" @click="tab = 'talk'">学员讨论</a></li>
         </ul>
         <div class="content_info"  v-if="tab == 'info'">
@@ -14,7 +14,7 @@
 <!--          <y-syllabus @playfunc="videoPlay" :list="courseInfo.chapterList" :nowNo="nowPeriodNo"></y-syllabus>-->
         </div>
         <div class="content_info"  v-if="tab == 'big'">
-          <y-syllabus @playfunc="videoPlay" :list="courseInfo.chapterList" :nowNo="nowPeriodNo"></y-syllabus>
+          <y-syllabus @playfunc="videoPlay" :list="courseInfo.chapterList" :nowNo="nowPeriodNo" :isPay="courseInfo.isPay" :isVipFree="courseInfo.isVipFree"></y-syllabus>
         </div>
         <div class="content_info"  v-if="tab == 'talk'">
           <y-talk :list="courseInfo.courseCommentList" :nowNo="nowPeriodNo" :nowCourseId="courseInfo.id"></y-talk>
@@ -47,6 +47,7 @@ import YSyllabus from '~/components/course/Syllabus'
 import YTalk from '~/components/course/Talk'
 import YWatchVideo from '~/components/course/WatchVideo'
 import {courseDetail, userCourseDetail, chapterSign, periodVideoUrl} from '~/api/course.js'
+import {isVip} from '~/api/user.js'
 import {periodVideo} from "../../api/account/course";
 export default {
   components: {
@@ -63,10 +64,13 @@ export default {
   },
   data () {
     return {
-      tab: 'info',
+      tab: 'big',
       nowPeriodNo: '',  //当前播放章节
       startPlay: false,
-      playData: {}
+      playData: {},
+      userInfo: this.$store.state.userInfo,
+      vipFree: false,
+      isLogin: false
     }
   },
   validate ({ params }) {
@@ -74,19 +78,24 @@ export default {
     return /^\d+$/.test(params.id)
   },
   async asyncData(context) {
-    let tk = context.store.state.tokenInfo;
+    let tk = context.store.state.userInfo;
     try {
       let result = new Object();
+      if(context.params.tab){
+        result.tab = context.params.tab
+      }
       if (tk) {
-
         let {data} = await userCourseDetail({courseId: context.params.id}, tk);
-        console.log(data)
-        console.log('info=====')
         if (data.code == 200) {
           result.courseInfo = data.data;
           result.teacherInfo = data.data.lecturer;
+          if(data.data.isVipFree === 1 && context.params.isVip){
+            result.vipFree = true
+          }else{
+            result.vipFree = false
+          }
           result.isbuy = false;
-          result.isLogin = false;
+          result.isLogin = true;
         }else if (data.code >= 300 && data.code <= 400){
           // context.redirect('login');
           context.store.dispatch('REDIRECT_LOGIN')
@@ -114,61 +123,86 @@ export default {
 
   },
   methods: {
-    videoPlay (data) {
-      console.log(data)
-      if (this.courseInfo.isPay || data.isFree) {
-        window.scrollTo(0, 0)
+    async videoPlay(data) {
         console.log(data)
-        this.nowPeriodNo = data.id
-        if (this.courseInfo.videoType === 1) {
-            //保利威视播放
-            chapterSign({
-                ip: 'string',
-                periodId: data.id,
-                videoVid: data.videoVid
-            }).then(res => {
-                res = res.data
-                this.isResetVideo = false
-                console.log(res)
-                console.log("res==========")
-                if (res.code === 200) {
-                    this.play(Object.assign({vid: data.videoVid}, res.data));
-                } else if (res.code === 402) {
-                    this.$msgBox({
-                        content: '购买后才可以观看',
-                        isShowCancelBtn: false
-                    })
-                }
-            }).catch(() => {
-                this.isResetVideo = false
-            })
-        } else {
-            //腾讯云播放
-            periodVideoUrl({
-                ip: 'string',
-                periodId: data.id
-            }).then(res => {
-                res = res.data
-                this.isResetVideo = false
-                if (res.code === 200) {
-                    this.tencentPlay(Object.assign({}, res.data));
-                } else {
-                    this.$msgBox({
-                        content: '购买后才可以观看',
-                        isShowCancelBtn: false
-                    })
-                }
-            }).catch(() => {
-                this.isResetVideo = false
-            })
+        let _that = this
+        let userNo = 0
+        if (this.isLogin) {
+            userNo = this.$store.state.userInfo.userNo
         }
-      } else {
-        this.$msgBox({
-          content: '购买后才可以播放',
-          isShowCancelBtn: false
+        await isVip({userNo: userNo}).then(res => {
+            if(res.data.code == 200){
+              this.vipFree = res.data.data
+              _that.isLogin = true
+            }else{
+              _that.isLogin = false
+            }
+        }).catch(() => {
+            this.vipFree = false
         })
-        return false;
-      }
+        if(!this.isLogin){
+            this.$msgBox({
+                content: '请先登录'
+            }).then(() => {
+                this.$store.dispatch('REDIRECT_LOGIN')
+            }).catch(() => {
+                this.$store.dispatch('REDIRECT_LOGIN')
+            })
+            return false;
+        }
+        if (this.courseInfo.isPay || data.isFree === 1 || (this.courseInfo.isVipFree === 1 && this.vipFree)) {
+            window.scrollTo(0, 0)
+            console.log(data)
+            this.nowPeriodNo = data.id
+            if (this.courseInfo.videoType === 1) {
+                //保利威视播放
+                chapterSign({
+                    ip: 'string',
+                    periodId: data.id,
+                    videoVid: data.videoVid
+                }).then(res => {
+                    res = res.data
+                    this.isResetVideo = false
+                    console.log(res)
+                    console.log("res==========")
+                    if (res.code === 200) {
+                        this.play(Object.assign({vid: data.videoVid}, res.data));
+                    } else if (res.code === 402) {
+                        this.$msgBox({
+                            content: '购买后才可以观看',
+                            isShowCancelBtn: false
+                        })
+                    }
+                }).catch(() => {
+                    this.isResetVideo = false
+                })
+            } else {
+                //腾讯云播放
+                periodVideoUrl({
+                    ip: 'string',
+                    periodId: data.id
+                }).then(res => {
+                    res = res.data
+                    this.isResetVideo = false
+                    if (res.code === 200) {
+                        this.tencentPlay(Object.assign({}, res.data));
+                    } else {
+                        this.$msgBox({
+                            content: '购买后才可以观看',
+                            isShowCancelBtn: false
+                        })
+                    }
+                }).catch(() => {
+                    this.isResetVideo = false
+                })
+            }
+        } else {
+            this.$msgBox({
+                content: '购买后才可以播放',
+                isShowCancelBtn: false
+            })
+            return false;
+        }
     },
     play (data) {
       console.log(data)
@@ -200,9 +234,16 @@ export default {
         this.startPlay = true;
         this.playData = data;
     }
+    // isVip(data) {
+    //     // isVip({userNo: data}).then(res => {
+    //     //     this.vipFree = res.data.data
+    //     // }).catch(() => {
+    //     //     this.vipFree = false
+    //     // })
+    // }
   },
   mounted () {
-    console.log(this.courseInfo)
+    // console.log(this.courseInfo)
   }
 }
 </script>

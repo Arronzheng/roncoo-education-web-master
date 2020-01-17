@@ -20,9 +20,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item, index) in pageObj.list">
+              <tr v-for="(item, index) in pageObj.list" @click="toStudy(item.courseId, item.periodId)">
                 <td>{{item.courseName}}</td>
-                <td class="name">{{item.periodName}}</td>
+                <td class="name" style="text-align:center;">{{item.periodName}}</td>
                 <td>{{item.gmtCreate}}</td>
               </tr>
             </tbody>
@@ -70,7 +70,7 @@
           method: studyList,
           params: {
             pageCurrent: this.pageCurrent,
-            pageSize: 20
+            pageSize: 5
           }
         }).then(res => {
           console.log(res)
@@ -81,6 +81,10 @@
             this.notdata = false
           }
         })
+      },
+      toStudy (courseId, periodId) {
+          this.$store.commit('SET_TEMPORARYURL');
+          this.$router.push({name: 'view-id', params: {id: courseId, tab: 'big'}});
       }
     },
     mounted () {
@@ -88,6 +92,10 @@
     }
   }
 </script>
-<style lang="scss">
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import '~/assets/css/account.scss';
+  table tbody tr:hover {
+    cursor: pointer;
+    color: #D51423;
+  }
 </style>

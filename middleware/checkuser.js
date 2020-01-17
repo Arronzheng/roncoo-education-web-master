@@ -10,5 +10,5 @@ export default function ({route, req, res, store, next}) {
     //   store.dispatch('GET_USERINFO');
     // }
   }
-  
+
 }

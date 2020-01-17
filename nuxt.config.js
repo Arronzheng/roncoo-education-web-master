@@ -46,7 +46,8 @@ module.exports = {
   */
   plugins: [
     '~/plugins/message.js',
-    '~/plugins/dragging.js'
+    '~/plugins/dragging.js',
+    '~/plugins/element-ui.js'
   ],
 
   /*
@@ -95,6 +96,17 @@ module.exports = {
     */
     extend(config, ctx) {
 
+    },
+    babel: {
+      "plugins": [
+        [
+          'component',
+          {
+            libraryName: 'element-ui',
+            styleLibraryName: 'theme-chalk'
+          }
+        ]
+      ]
     }
   }
 }

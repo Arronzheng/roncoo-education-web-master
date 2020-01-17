@@ -24,7 +24,8 @@
         <li :class="{now: fourNow == 3}" @click="changeFour(3)"><a href="javascript:">全部</a></li>
         <li :class="{now: fourNow == 2}" @click="changeFour(2)"><a href="javascript:">付费</a></li>
         <li :class="{now: fourNow == 1}" @click="changeFour(1)"><a href="javascript:">免费</a></li>
-        <li v-if="webInfo && webInfo.isEnableVip" :class="{now: fourNow == 4}" @click="changeFour(4)"><a href="javascript:">SVIP免费</a></li>
+<!--        <li v-if="webInfo && webInfo.isEnableVip" :class="{now: fourNow == 4}" @click="changeFour(4)"><a href="javascript:">SVIP免费</a></li>-->
+        <li v-if="webInfo" :class="{now: fourNow == 4}" @click="changeFour(4)"><a href="javascript:">SVIP免费</a></li>
       </ul>
     </div>
     <div class="list_content" v-if="courseType === 'live'">

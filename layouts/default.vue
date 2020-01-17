@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import  axios from 'axios'
 export default {
   head () {
     return {
@@ -17,7 +18,7 @@ export default {
     if (process.client) {
       this.$store.commit('INIT_WEB');
       if (!!this.$store.state.tokenInfo) {
-        if (!this.$store.state.userInfo || this.$store.state.tokenInfo != this.$store.state.userInfo.token) {
+        if (this.$store.state.userInfo && this.$store.state.tokenInfo != this.$store.state.userInfo.token) {
           this.$store.dispatch('GET_USERINFO');
         }
       }
@@ -36,7 +37,7 @@ export default {
     })
   }
 }
-  
+
 </script>
 <style>
 html {

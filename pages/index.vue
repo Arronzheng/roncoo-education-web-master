@@ -22,7 +22,7 @@
                 </div>
               <p>{{ that.courseName }}</p>
               <span v-if="that.isFree" class="price_box">免费</span>
-              <span class="price_box" v-else>￥{{that.courseOriginal.toFixed(2)}}<span class="font_12 padl_10" v-if="openVip && that.courseDiscount != that.courseOriginal">SVIP:{{that.courseDiscount ? '￥' + that.courseDiscount.toFixed(2) : '免费'}}</span></span>
+              <span class="price_box" v-else>￥{{that.courseOriginal.toFixed(2)}}<span class="font_12 padl_10" v-if="openVip && that.courseSvipDiscount != that.courseOriginal">SVIP:{{that.courseSvipDiscount ? '￥' + that.courseSvipDiscount.toFixed(2) : '免费'}}</span></span>
               </nuxt-link>
             </li>
             <li v-for="thatLive in item.liveCourseList" :key="thatLive.id">
@@ -36,7 +36,7 @@
                 </div>
               <p>{{ thatLive.courseName }}（直播）</p>
               <span class="price_box" v-if="thatLive.isFree">免费</span>
-              <span class="price_box" v-else>￥{{thatLive.courseOriginal.toFixed(2)}}<span class="font_12 padl_10" v-if="openVip && thatLive.courseDiscount != thatLive.courseOriginal">SVIP:{{thatLive.courseDiscount ? '￥' + thatLive.courseDiscount.toFixed(2) : '免费'}}</span></span>
+              <span class="price_box" v-else>￥{{thatLive.courseOriginal.toFixed(2)}}<span class="font_12 padl_10" v-if="openVip && thatLive.courseSvipDiscount != thatLive.courseOriginal">SVIP:{{thatLive.courseSvipDiscount ? '￥' + thatLive.courseSvipDiscount.toFixed(2) : '免费'}}</span></span>
               </nuxt-link>
             </li>
             <li v-for="thatGroup in item.zoneCourseCombinaRefList" :key="thatGroup.id">
@@ -46,7 +46,7 @@
                 </div>
               <p>{{ thatGroup.courseName }} (录播+直播)</p>
               <span class="price_box" v-if="thatGroup.isFree">免费</span>
-              <span class="price_box" v-else>￥{{thatGroup.courseOriginal.toFixed(2)}}<span class="font_12 padl_10" v-if="openVip && thatGroup.courseDiscount != thatGroup.courseOriginal">SVIP:{{thatGroup.courseDiscount ? '￥' + thatGroup.courseDiscount.toFixed(2) : '免费'}}</span></span>
+              <span class="price_box" v-else>￥{{thatGroup.courseOriginal.toFixed(2)}}<span class="font_12 padl_10" v-if="openVip && thatGroup.courseSvipDiscount != thatGroup.courseOriginal">SVIP:{{thatGroup.courseSvipDiscount ? '￥' + thatGroup.courseSvipDiscount.toFixed(2) : '免费'}}</span></span>
               </nuxt-link>
             </li>
           </ul>

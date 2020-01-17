@@ -73,7 +73,7 @@ export default {
       obj: {
         orderStatus: 0,
         pageCurrent: 1,
-        pageSize: 20
+        pageSize: 5
       },
       pageObj: {
         pageCurrent: '',
